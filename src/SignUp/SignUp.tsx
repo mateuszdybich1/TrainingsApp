@@ -17,6 +17,9 @@ import * as EmailValidator from 'email-validator';
 import {validateUsername, validateName, validateLastName, validatePassword, validateStreet, validateCity} from './Validation';
 import {countries} from './Countries';
 import MenuItem from '@mui/material/MenuItem';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import { Collapse } from '@mui/material';
 
 const theme = createTheme();
 
@@ -56,12 +59,25 @@ export default function SignUp() {
   const [cityError, setCityError] = useState(false);
   const [cityErrorText, setCityErrorText] = useState("");
 
+  const [isButtonClicked, setButtonClicked] = useState(false);
 
+  const [buttonText, setButtonText] = useState("Add Address (Optional)");
+
+  function handleClick(){
+    setButtonClicked(!isButtonClicked);
+    if(isButtonClicked=== false){
+      setButtonText("Remove Address");
+      setCountry("");
+      setCity("");
+      setStreet("");
+    }
+    else if(isButtonClicked=== true){
+      setButtonText("Add Address (Optional)");
+    }
+  }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const data = new FormData(event.currentTarget);
 
 
     const isEmailValid : boolean = EmailValidator.validate(email);
@@ -73,10 +89,6 @@ export default function SignUp() {
     const isLastNameValid: boolean = validateLastName(lastName, setLastNameError, setLastNameErrorText);
 
     const isPasswordValid: boolean = validatePassword(password, setPasswordError, setPasswordErrorText);
-
-    
-
-    
 
     if(isEmailValid &&  isUsernameValid && isNameValid && isLastNameValid && isPasswordValid)
     {
@@ -135,14 +147,14 @@ export default function SignUp() {
       {
 
         //Data correct
-
+        
         console.log({
           Username: username,
           Name: name,
           Lastname: lastName,
           Email: email,
           password: password,
-        }); 
+        });
       }
       
 
@@ -161,7 +173,6 @@ export default function SignUp() {
 
   };
 
-
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -169,206 +180,218 @@ export default function SignUp() {
         <Box
           sx={{
             height:'100%',
+            width:'100%',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <Avatar sx={{ mt: 2, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 4 }}>
+          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2 }}>
             <Grid container spacing={2}>
-            <Grid item xs={12}>
-                <TextField                 
-                  name='userName'   
-                  required         
-                  fullWidth
-                  id="userName"
-                  label="Username"
-                  autoFocus
-                  
-                  value={username}
-                  helperText={usernameErrorText}
-                  onChange={(e) => {
-                    setUsernameError(false);
-                    setUsernameErrorText("");
-                    setUsername(e.target.value)
-                  }
-                }
-                  error={usernameError}
-                  
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="First Name"
-
-                  
-                  value={name}
-                  helperText={nameErrorText}
-                  onChange={(e) => {
-                      setNameError(false);
-                      setNameErrorText("");
-                      if(re.test(e.target.value) || e.target.value ==="")
-                      setName(e.target.value)
-                    }
-                  }
-                  error={nameError}
-                  
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-
-
-                  value={lastName}
-                  helperText={lastNameErrorText}
-                  onChange={(e) => {
-                      setLastNameError(false);
-                      setLastNameErrorText("");
-                      if(re.test(e.target.value) || e.target.value ==="")
-                      setLastName(e.target.value)
-                    }
-                  }
-                  error={lastNameError}
-                  
-                />
-              </Grid>
               <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-
-                  value={email}
-                  helperText={emailErrorText}
-                  onChange={(e) => {
-                      setEmailError(false);
-                      setEmailErrorText("");
-                      setEmail(e.target.value)
+                  <TextField                 
+                    name='userName'   
+                    required         
+                    fullWidth
+                    id="userName"
+                    label="Username"
+                    autoFocus
+                    
+                    value={username}
+                    helperText={usernameErrorText}
+                    onChange={(e) => {
+                      setUsernameError(false);
+                      setUsernameErrorText("");
+                      setUsername(e.target.value)
                     }
                   }
-                  error={emailError}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
+                    error={usernameError}
+                    
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    autoComplete="given-name"
+                    name="firstName"
+                    required
+                    fullWidth
+                    id="firstName"
+                    label="First Name"
 
-                  value={password}
-                  helperText={passwordErrorText}
-                  onChange={(e) => {
-                      setPasswordError(false);
-                      setPasswordErrorText("");
-                      setPassword(e.target.value)
+                    
+                    value={name}
+                    helperText={nameErrorText}
+                    onChange={(e) => {
+                        setNameError(false);
+                        setNameErrorText("");
+                        if(re.test(e.target.value) || e.target.value ==="")
+                        setName(e.target.value)
+                      }
                     }
-                  }
-                  error={passwordError}
-                />
-              </Grid>
+                    error={nameError}
+                    
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="lastName"
+                    label="Last Name"
+                    name="lastName"
+                    autoComplete="family-name"
 
-              <Grid item xs={6} sm={6}>
-                <TextField
-                  fullWidth
-                  select
-                  id="country"
-                  label="Country"
-                  name="Country"
-                  autoComplete="country"
-                  value={country}
-                  helperText={countryErrorText}
-                  
-                  onChange={(e) => {
-                      setCountryError(false);
-                      setCountryErrorText("");
-                      setCountry(e.target.value)
+
+                    value={lastName}
+                    helperText={lastNameErrorText}
+                    onChange={(e) => {
+                        setLastNameError(false);
+                        setLastNameErrorText("");
+                        if(re.test(e.target.value) || e.target.value ==="")
+                        setLastName(e.target.value)
+                      }
                     }
-                  }
-                  error={countryError}      
-                >
-                  {
-                  countries.map((option) => ( 
-                  <MenuItem key={option.value} value={option.value}>
-                    {
-                    option.label}
-                  </MenuItem>
-                   ))}
+                    error={lastNameError}
+                    
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
 
-                </TextField>
-              </Grid>
-
-              <Grid item xs={6} sm={6}>
-                <TextField
-                  fullWidth
-                  id="city"
-                  label="City"
-                  name="City"
-                  autoComplete="city"
-
-                  value={city}
-                  helperText={cityErrorText}
-                  onChange={(e) => {
-                      setCityError(false);
-                      setCityErrorText("");
-                      setCity(e.target.value)
+                    value={email}
+                    helperText={emailErrorText}
+                    onChange={(e) => {
+                        setEmailError(false);
+                        setEmailErrorText("");
+                        setEmail(e.target.value)
+                      }
                     }
-                  }
-                  error={cityError}
-                />
-              </Grid>
+                    error={emailError}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    autoComplete="new-password"
 
-              <Grid item xs={12} sm={12}>
-                <TextField
-                  fullWidth
-                  id="street"
-                  label="Street"
-                  name="street"
-                  autoComplete="street"
-
-                  value={street}
-                  helperText={streetErrorText}
-                  onChange={(e) => {
-                      setStreetError(false);
-                      setStreetErrorText("");
-                      setStreet(e.target.value)
+                    value={password}
+                    helperText={passwordErrorText}
+                    onChange={(e) => {
+                        setPasswordError(false);
+                        setPasswordErrorText("");
+                        setPassword(e.target.value)
+                      }
                     }
-                  }
-                  error={streetError}
-                />
+                    error={passwordError}
+                  />
+                </Grid>
+                
+
+                <Grid item xs={12} sm ={12}>
+                <Button startIcon={isButtonClicked ? <RemoveIcon/> : <AddIcon/>} fullWidth onClick={handleClick}>{buttonText}
+                </Button>
+                </Grid>
+                
+                <Grid item xs={12} sm={12}>
+                <Collapse  in={isButtonClicked} timeout="auto" unmountOnExit>
+
+                  <Grid  container spacing={2} item xs={12} sm ={12}>
+                    <Grid item xs={6} sm={6}>
+                      <TextField
+                        fullWidth
+                        select
+                        id="country"
+                        label="Country"
+                        name="Country"
+                        autoComplete="country"
+                        value={country}
+                        helperText={countryErrorText}
+      
+                        onChange={(e) => 
+                          {
+                            setCountryError(false);
+                            setCountryErrorText("");
+                            setCountry(e.target.value)
+                          }
+                        }
+                        error={countryError}      
+                      >
+                        {countries.map((option) => ( 
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+
+                      </TextField>
+                    </Grid>
+
+                    <Grid item xs={6} sm={6}>
+                      <TextField
+                        fullWidth
+                        id="city"
+                        label="City"
+                        name="City"
+                        autoComplete="city"
+
+                        value={city}
+                        helperText={cityErrorText}
+                        onChange={(e) => 
+                          {
+                            setCityError(false);
+                            setCityErrorText("");
+                            setCity(e.target.value)
+                          }
+                        }
+                        error={cityError}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12} sm={12} sx={{mb:2}}>
+                      <TextField
+                        fullWidth
+                        id="street"
+                        label="Street"
+                        name="street"
+                        autoComplete="street"
+
+                        value={street}
+                        helperText={streetErrorText}
+                        onChange={(e) => 
+                          {
+                            setStreetError(false);
+                            setStreetErrorText("");
+                            setStreet(e.target.value)
+                          }
+                        }
+                        error={streetError}
+                      />
+                    </Grid>
+                  </Grid>  
+                </Collapse>
               </Grid>
-              
-              
-              
             </Grid>
             <Button
               type="submit"
               style={{height:'60px', width:'100%'}}
               variant="contained"
-              sx={{ mt: 2, mb: 3 }}
+              sx={{ mt: 0, mb: 2 }}
               
             >
               Sign Up
@@ -382,7 +405,7 @@ export default function SignUp() {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
+        <Copyright sx={{ mt: 2 }} />
       </Container>
     </ThemeProvider>
   );
