@@ -154,23 +154,16 @@ function DashboardContent() {
 
             <ListItemButton>
               <ListItemIcon>
-                <ShoppingCartIcon />
-              </ListItemIcon>
-              <ListItemText primary="Orders" />
-            </ListItemButton>
-
-            <ListItemButton>
-              <ListItemIcon>
                 <PeopleIcon />
               </ListItemIcon>
-              <ListItemText primary="Customers" />
+              <ListItemText primary="Courses" />
             </ListItemButton>
 
-            <ListItemButton>
+            <ListItemButton component={Link} href="/signin">
               <ListItemIcon>
                 <BarChartIcon />
               </ListItemIcon>
-              <ListItemText primary="Reports" />
+              <ListItemText primary="Sign In" />
             </ListItemButton>
 
             <ListItemButton component={Link} href="/signup">

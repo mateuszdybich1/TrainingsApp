@@ -84,6 +84,11 @@ export function validateUsername(username:string, setUsernameError: React.Dispat
       setPasswordErrorText("Password too short");
       return false;
     }
+    else if(password.length > 15){
+      setPasswordError(true);
+      setPasswordErrorText("Password too long");
+      return false;
+    }
     else if(password.includes(' ')){
       setPasswordError(true);
       setPasswordErrorText("Password contains space(s)");
