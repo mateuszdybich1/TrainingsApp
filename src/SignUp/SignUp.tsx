@@ -14,12 +14,15 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from 'react';
 import Copyright from '../Copyright'
 import * as EmailValidator from 'email-validator';
-import {validateUsername, validateName, validateLastName, validatePassword, validateStreet, validateCity} from './Validation';
+import {setUsernameState,setNameState,setLastNameState,setPasswordState,setCityState,setStreetState} from './SetTextFieldState';
 import {countries} from './Countries';
 import MenuItem from '@mui/material/MenuItem';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { Collapse } from '@mui/material';
+import { Checkbox, Collapse, FormGroup } from '@mui/material';
+import { sendData, UserData } from './SendData';
+import { validateAddress } from './Validation';
+import { FormControl } from '@mui/base';
 
 const theme = createTheme();
 
@@ -47,6 +50,8 @@ export default function SignUp() {
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorText, setPasswordErrorText] = useState("");
 
+  const [isTeacher, setIsTeacher] = useState(false);
+
   const [country, setCountry] = useState("");
   const [countryError, setCountryError] = useState(false);
   const [countryErrorText, setCountryErrorText] = useState("");
@@ -59,21 +64,33 @@ export default function SignUp() {
   const [cityError, setCityError] = useState(false);
   const [cityErrorText, setCityErrorText] = useState("");
 
-  const [isButtonClicked, setButtonClicked] = useState(false);
+  const [isShowAddressButtonClicked, setShowAddressButtonClicked] = React.useState(false);
+  const [showAddressButtonText, setShowAddressButtonText] = React.useState("Add Address (Optional)");
 
-  const [buttonText, setButtonText] = useState("Add Address (Optional)");
 
-  function handleClick(){
-    setButtonClicked(!isButtonClicked);
-    if(isButtonClicked=== false){
-      setButtonText("Remove Address");
+  function showAddressTextFields(){
+    if(isShowAddressButtonClicked=== true)
+    {
+      setShowAddressButtonText("Add Address (Optional)");
+    }
+    else
+    {
+      setShowAddressButtonText("Remove Address");
+
       setCountry("");
+      setCountryError(false);
+      setCountryErrorText("");
+
       setCity("");
+      setCityError(false);
+      setCityErrorText("");
+
       setStreet("");
+      setStreetError(false);
+      setStreetErrorText("");
+
     }
-    else if(isButtonClicked=== true){
-      setButtonText("Add Address (Optional)");
-    }
+    setShowAddressButtonClicked(!isShowAddressButtonClicked); 
   }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -82,89 +99,70 @@ export default function SignUp() {
 
     const isEmailValid : boolean = EmailValidator.validate(email);
 
-    const isUsernameValid : boolean = validateUsername(username,setUsernameError, setUsernameErrorText);
+    setUsernameState(username,setUsernameError, setUsernameErrorText);
+    setNameState(name,setNameError,setNameErrorText);
+    setLastNameState(lastName, setLastNameError, setLastNameErrorText);
+    setPasswordState(password, setPasswordError, setPasswordErrorText);
 
-    const isNameValid: boolean = validateName(name,setNameError,setNameErrorText);
 
-    const isLastNameValid: boolean = validateLastName(lastName, setLastNameError, setLastNameErrorText);
-
-    const isPasswordValid: boolean = validatePassword(password, setPasswordError, setPasswordErrorText);
-
-    if(isEmailValid &&  isUsernameValid && isNameValid && isLastNameValid && isPasswordValid)
+    if(isEmailValid &&  !usernameError && !nameError && !lastNameError && !passwordError)
     {
-      if(country=="" && (street!="" || city!=""))
-      {
-        setCountryError(true);
-        setCountryErrorText("Pick a Country")
-      }
-      else if(country!="" && (street=="" || city==""))
-      {
-         if(street=="" && city=="")
-         {
-          setCityError(true);
-          setCityErrorText("Empty City field");
-          setStreetError(true);
-          setStreetErrorText("Empty Street field");
-        }
-        else if(street=="")
-        {
-          setStreetError(true);
-          setStreetErrorText("Empty Street field");
-        }
-        else if(city=="")
-        {
-          setCityError(true);
-          setCityErrorText("Empty City field");
-        }
-        
-      }
-      else if(country!="")
-      {
-        if(street!="" && country!="")
-        {
-          const isStreetValid: boolean = validateCity(street, setStreetError, setStreetErrorText);
-          const isCityValid: boolean = validateStreet(city, setCityError, setCityErrorText);
-          if(isStreetValid && isCityValid)
-          {
 
-            //Data correct
-
-            console.log({
-              Username: username,
-              Name: name,
-              Lastname: lastName,
-              Email: email,
-              password: password,
-              Country: country,
-              City: city,
-              Street: street
-            });
-          }
-        }
-        
-      }
-      else if(country=="" && street=="" && city=="")
-      {
-
-        //Data correct
-        
-        console.log({
-          Username: username,
-          Name: name,
-          Lastname: lastName,
-          Email: email,
+      let axiosUserData: UserData = 
+        {
+          username: username,
+          name: name,
+          lastname: lastName,
+          email: email,
           password: password,
-        });
-      }
-      
+          isTeacher: isTeacher,
+          country: country,
+          city: city,
+          street: street,
+          
+        };
+      const isAddressValid : boolean = validateAddress(country,city,street);
 
+      if(isAddressValid)
+      {
+        if(country===""&& city===""&& street==="")
+        {
+          sendData(axiosUserData);
+        }
+        else if(country!==""&& city!==""&& street!=="")
+        {
+          setCityState(street, setStreetError, setStreetErrorText);
+          setStreetState(city, setCityError, setCityErrorText);
+          if(!streetError && !cityError)
+          {
+            sendData(axiosUserData);
+          }
+        }    
+      }
+      else{
+        if(country==="")
+        {
+          setCountryError(true);
+          setCountryErrorText("Empty Country field");
+        }
+        if(city==="")
+        {
+          setCityError(true);
+            setCityErrorText("Empty City field");
+        }
+        if(street==="")
+        {
+          setStreetError(true);
+          setStreetErrorText("Empty Street field");
+        }
+      }
     }
     else if(email=="")
     {
       setEmailError(true);
       setEmailErrorText("Empty email");
     }
-    else if(!EmailValidator.validate(email))
+    else if(!isEmailValid)
     {
       setEmailError(true);
       setEmailErrorText("Incorrect form of email");
@@ -186,10 +184,8 @@ export default function SignUp() {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ mt: 2, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
+          
+          <Typography marginTop={2} component="h1" variant="h5">
             Sign up
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2 }}>
@@ -205,11 +201,12 @@ export default function SignUp() {
                     
                     value={username}
                     helperText={usernameErrorText}
-                    onChange={(e) => {
-                      setUsernameError(false);
-                      setUsernameErrorText("");
-                      setUsername(e.target.value)
-                    }
+                    onChange={(e) => 
+                      {
+                        setUsernameError(false);
+                        setUsernameErrorText("");
+                        setUsername(e.target.value)
+                      }
                   }
                     error={usernameError}
                     
@@ -227,11 +224,15 @@ export default function SignUp() {
                     
                     value={name}
                     helperText={nameErrorText}
-                    onChange={(e) => {
+                    onChange={(e) => 
+                      {
                         setNameError(false);
                         setNameErrorText("");
                         if(re.test(e.target.value) || e.target.value ==="")
-                        setName(e.target.value)
+                        {
+                          setName(e.target.value);
+                        }
+                        
                       }
                     }
                     error={nameError}
@@ -250,11 +251,15 @@ export default function SignUp() {
 
                     value={lastName}
                     helperText={lastNameErrorText}
-                    onChange={(e) => {
+                    onChange={(e) => 
+                      {
                         setLastNameError(false);
                         setLastNameErrorText("");
                         if(re.test(e.target.value) || e.target.value ==="")
-                        setLastName(e.target.value)
+                        {
+                          setLastName(e.target.value);
+                        }
+                        
                       }
                     }
                     error={lastNameError}
@@ -272,10 +277,11 @@ export default function SignUp() {
 
                     value={email}
                     helperText={emailErrorText}
-                    onChange={(e) => {
+                    onChange={(e) =>
+                      {
                         setEmailError(false);
                         setEmailErrorText("");
-                        setEmail(e.target.value)
+                        setEmail(e.target.value);
                       }
                     }
                     error={emailError}
@@ -293,24 +299,45 @@ export default function SignUp() {
 
                     value={password}
                     helperText={passwordErrorText}
-                    onChange={(e) => {
+                    onChange={(e) => 
+                      {
                         setPasswordError(false);
                         setPasswordErrorText("");
-                        setPassword(e.target.value)
+                        setPassword(e.target.value);
                       }
                     }
                     error={passwordError}
                   />
                 </Grid>
+                <Grid marginLeft={0.5} item xs={12} sm={12}>
+                  <FormGroup>
+                  <FormControlLabel
+                    
+                    label="Are you a teacher?"
+                    labelPlacement='end'
+                    control=
+                    {
+                      <Checkbox
+                        checked={isTeacher}
+                        onChange={(e)=>{setIsTeacher(e.target.checked)}}
+                        value={"Are you a teacher"}
+                        
+                      />
+                    }
+                  />
+                  </FormGroup>
+                  
+                  
+                </Grid>
                 
 
                 <Grid item xs={12} sm ={12}>
-                <Button startIcon={isButtonClicked ? <RemoveIcon/> : <AddIcon/>} fullWidth onClick={handleClick}>{buttonText}
-                </Button>
+                  <Button startIcon={isShowAddressButtonClicked ? <RemoveIcon/> : <AddIcon/>} fullWidth onClick={showAddressTextFields}>{showAddressButtonText}
+                  </Button>
                 </Grid>
                 
                 <Grid item xs={12} sm={12}>
-                <Collapse  in={isButtonClicked} timeout="auto" unmountOnExit>
+                <Collapse  in={isShowAddressButtonClicked} timeout="auto" unmountOnExit>
 
                   <Grid  container spacing={2} item xs={12} sm ={12}>
                     <Grid item xs={6} sm={6}>
