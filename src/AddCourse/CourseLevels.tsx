@@ -1,6 +1,6 @@
 export const courseLevels =
 [
-  {label: 'Beginner', value: 'B'}, 
-  {label: 'Intermediate', value: 'I'}, 
-  {label: 'Advanced', value: 'A'}, 
+  {label: 'Beginner', value: 'Beginner'}, 
+  {label: 'Intermediate', value: 'Intermediate'}, 
+  {label: 'Advanced', value: 'Advanced'}, 
 ]

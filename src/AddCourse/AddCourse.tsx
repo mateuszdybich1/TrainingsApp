@@ -5,7 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import { FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { FormControl, FormControlLabel, FormLabel, Grid, IconButton, Input, MenuItem, Paper, Radio, RadioGroup } from '@mui/material';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -15,6 +15,12 @@ import dayjs, { Dayjs } from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { courseLevels } from './CourseLevels';
 import { FileUploadOutlined, Margin } from '@mui/icons-material';
+import {validateCourse, validateCourseLevel,validateLocation, validateTrainerName} from './SetAddCourseTextFieldsState';
+import { CourseData} from './SendCourseData';
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 
 
@@ -25,41 +31,116 @@ const now = dayjs();
 export default function AddCourse() 
 {
 
+
+    const [courseName, setCourseName] = useState("");
+    const [courseNameError, setCourseNameError] = useState(false);
+    const [courseNameErrorText, setCourseNameErrorText] = useState("");
+
+    const [location, setLocation] = useState("");
+    const [locationError, setLocationError] = useState(false);
+    const [locationErrorText, setLocationErrorText] = useState("");
+
+    const [courseLevel, setCourseLevel] = useState("");
+    const [courseLevelError, setCourseLevelError] = useState(false);
+    const [courseLevelErrorText, setCourseLevelErrorText] = useState("");
+
+    const [trainerName, setTrainerName] = useState("");
+    const [trainerNameError, setTrainerNameError] = useState(false);
+    const [trainerNameErrorText, setTrainerNameErrorText] = useState("");
+
     const [startDate, setStartDate] = React.useState<Dayjs | null>(dayjs(now));
     const [endDate, setEndDate] = React.useState<Dayjs | null>(dayjs(startDate?.add(1,'day')));
 
     const [startHour, setStartHour] = React.useState<Dayjs | null>(dayjs(now));
     const [endHour, setEndHour] = React.useState<Dayjs | null>(dayjs(startHour?.add(1,'hour')));
 
-    const [courseLevel, setCourseLevel] = React.useState("");
 
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    
+
+    const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        const reader = new FileReader();
+        reader.onload = () => {
+          setSelectedImage(reader.result as string);
+        };
+        if (file) {
+          reader.readAsDataURL(file);
+        }
+      };
     
     
 
     function handleSubmit(event: FormEvent<HTMLFormElement>): void {
+        
+        
         event.preventDefault();
         const data = new FormData(event.currentTarget);
 
-        let statHourNumber = startHour?.hour().valueOf();
-        let starMinuteNumber = startHour?.minute().valueOf();
+        let isCourseValid = validateCourse(courseName,setCourseNameError,setCourseNameErrorText);
 
-        let endHourNumber = endHour?.hour().valueOf();
-        let endMinuteNumber = endHour?.minute().valueOf();
+        let isCourseLevelValid =  validateCourseLevel(courseLevel,setCourseLevelError, setCourseLevelErrorText);
+
+        let isLocationValid = validateLocation(location,setLocationError,setLocationErrorText); 
+
+        let isTrainernameValid = validateTrainerName(trainerName,setTrainerNameError,setTrainerNameErrorText);
         
-        console.log(statHourNumber+":"+starMinuteNumber);
-        console.log(endHourNumber+":"+endMinuteNumber);
 
-        console.log(startDate);
-        console.log(data.get('language')?.toString());
-        console.log(courseLevel);
+
+        if(isCourseValid && isCourseLevelValid && isLocationValid && isTrainernameValid)
+        {
+
+            
+            let courseData: CourseData = 
+            {
+                image: selectedImage+"", 
+                courseName:courseName,
+                startDate: startDate?.format('DD/MM/YYYY').toString()+"" ,
+                endDate:endDate?.format('DD/MM/YYYY').toString()+"",
+                startTime:startHour?.format('HH:mm').toString()+"",
+                endTime:endHour?.format('HH:mm').toString()+"",
+                language: data.get('language')?.toString()+"",
+                location:location,
+                courseLevel:courseLevel,
+                trainerName:trainerName,
+                currentUserUsername:"string"  
+            };
+            
+            axios.post('/course/addcourse', courseData)
+            .then(response =>{toast.success("Sukces: " + response.status , {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                });} )
+            .catch(error => {
+                toast.error(error.response.data, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    });
+            });
+
+
+        }
         
     }
-    function handleUpload(): void {
-        
-    }
+    
 
     return (
     <Container disableGutters maxWidth={false} sx={{display:'flex', flexDirection:'column',minHeight:'100vh'}}>
+        <Box>
+            <ToastContainer />
+        </Box>
 
         <Box >
         <Container disableGutters maxWidth={false} sx={{display:'flex', flexDirection:'row',justifyContent:'center' ,background:'grey'}}>
@@ -92,16 +173,17 @@ export default function AddCourse()
                                     <Box width={'100%'} height={'100%'}>
                                         <Grid padding={10} container spacing={2} height={'100%'}>
 
-                                            <Grid item sm={12} xs={12} height={'75%'} sx={{background:'grey'}}>
-                                            <Box display={'flex'} justifyContent={'center'} height={'100%'} alignItems={'center'} alignContent={'center'} >
-                                                <Box >
-                                                <h2>
-                                                    image field
-                                                </h2>
-                                                </Box>
-                                                
+                                        <Grid item sm={12} xs={12} height={'75%'} sx={{ background: 'grey' }}>
+                                            <Box display={'flex'} justifyContent={'center'} height={'100%'} alignItems={'center'} alignContent={'center'}>
+                                            <Box>
+                                                {selectedImage ? (
+                                                <img src={selectedImage} alt="Selected" style={{ maxWidth: '100%', maxHeight: '100%' }} />
+                                                ) : (
+                                                <h2>image field</h2>
+                                                )}
                                             </Box>
-                                            </Grid>
+                                            </Box>
+                                        </Grid>
                                             <Grid item sm={12} xs ={12} height={'25%'} marginTop={5} display={'flex'} alignItems={'flex-end'}  justifyContent={'center'}>
                                             
                                             <Box  width={'100%'} justifyContent={'center'} >
@@ -111,6 +193,9 @@ export default function AddCourse()
                                                 id="uploadImage"
                                                 type="file"
                                                 accept='image/*'
+                                                name='image'
+
+                                                onChange={handleImageUpload}
                                             />
                                             <label  htmlFor="uploadImage">
                                                 <Button 
@@ -159,6 +244,19 @@ export default function AddCourse()
                                         label="Course name"
                                         name="courseName"
                                         autoFocus
+
+
+                                        value={courseName}
+                                        helperText={courseNameErrorText}
+                                        onChange={(e) => 
+                                        {
+                                            setCourseNameError(false);
+                                            setCourseNameErrorText("");
+                                            
+                                            setCourseName(e.target.value);
+                                        }
+                                        }
+                                        error={courseNameError}
                                     />
                                 </Grid>
 
@@ -174,6 +272,7 @@ export default function AddCourse()
                                                 label="Start Date"
                                                 value={startDate}
                                                 onChange={(e) => setStartDate(e)}
+                                                
                                             />
 
                                             <Box display={'flex'} alignItems={'center'}  padding={1}>
@@ -266,10 +365,10 @@ export default function AddCourse()
 
                                 <Grid item sm={12} xs={6}>
                                 <FormControl sx={{marginLeft:1}}>
-                                    <FormLabel id="demo-radio-buttons-group-label">Language</FormLabel>
+                                    <FormLabel id="language">Language</FormLabel>
                                     <RadioGroup
                                         sx={{display:'flex', flexDirection:'row'}}
-                                        aria-labelledby="demo-radio-buttons-group-label"
+                                        aria-labelledby="language"
                                         defaultValue="Polish"
                                         name="language"
                                         
@@ -292,6 +391,18 @@ export default function AddCourse()
                                             type="text"
                                             id="location"
                                             autoComplete="location"
+
+                                            value={location}
+                                            helperText={locationErrorText}
+                                            onChange={(e) => 
+                                            {
+                                                setLocationError(false);
+                                                setLocationErrorText("");
+                                                
+                                                setLocation(e.target.value);
+                                            }
+                                            }
+                                            error={locationError}
                                         />
                                 </Grid>
                                 <Grid item sm={6} xs={12}>
@@ -305,13 +416,15 @@ export default function AddCourse()
                                     autoComplete="level"
                                     value={courseLevel}
                                     
-
+                                    helperText={courseLevelErrorText}
                                     onChange={(e) => 
-                                    {
-                                       
-                                        setCourseLevel(e.target.value);
-                                    } 
+                                        {
+                                            setCourseLevelError(false);
+                                            setCourseLevelErrorText("");
+                                            setCourseLevel(e.target.value);
+                                        } 
                                     }
+                                    error={courseLevelError}
                                     
                                 >
                                     
@@ -333,17 +446,32 @@ export default function AddCourse()
                                         type="text"
                                         id="trainer"
                                         autoComplete="trainer"
+
+                                        value={trainerName}
+                                            helperText={trainerNameErrorText}
+                                            onChange={(e) => 
+                                            {
+                                                setTrainerNameError(false);
+                                                setTrainerNameErrorText("");
+                                                
+                                                setTrainerName(e.target.value);
+                                            }
+                                            }
+                                            error={trainerNameError}
                                     />
                                 </Grid>
-                            </Grid>            
-                            <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 5 }}
-                            >
-                            Add Course
-                            </Button>
+                            </Grid>  
+                            <Grid item xs={12} sm={12}>
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    sx={{ marginTop:5 }}
+                                >
+                                Add Course
+                                </Button>
+                            </Grid>          
+                            
                         </Box>
                         
                 </Paper>
