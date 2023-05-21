@@ -45,7 +45,6 @@ export default function SignIn() {
         if(isEmailValid && isPasswordValid)
         {
 
-            
             console.log({
             email: data.get('email'),
             password: data.get('password'),
