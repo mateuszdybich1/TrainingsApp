@@ -30,12 +30,12 @@ function preventDefault(event: React.MouseEvent) {
 
 export default function Orders() {
   let [rows, setRows] = useState<CreateData[]>([]);
-  useEffect(() => {
-    axios.get("/api/v1/test").then((res) => {
-      let rowsArray: Array<CreateData> = res.data;
-      setRows(rowsArray);
-    });
-  }, []);
+  // useEffect(() => {
+  //   axios.get("/api/v1/test").then((res) => {
+  //     let rowsArray: Array<CreateData> = res.data;
+  //     setRows(rowsArray);
+  //   });
+  // }, []);
   return (
     <React.Fragment>
       <Title>Recent Orders</Title>

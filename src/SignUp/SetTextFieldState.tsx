@@ -1,4 +1,6 @@
 
+import * as EmailValidator from 'email-validator';
+
 export function setUsernameState (username:string, setUsernameError: React.Dispatch<React.SetStateAction<boolean>>
   ,setUsernameErrorText: React.Dispatch<React.SetStateAction<string>>)
   {
@@ -74,6 +76,23 @@ export function setUsernameState (username:string, setUsernameError: React.Dispa
     }
   }
   
+  export function setEmailState(email:string, setEmailError: React.Dispatch<React.SetStateAction<boolean>>, setEmailErrorText: React.Dispatch<React.SetStateAction<string>>)
+  {
+    const isEmailValid : boolean = EmailValidator.validate(email);
+    if(!isEmailValid)
+    {
+      if(email==="")
+      {
+        setEmailError(true);
+        setEmailErrorText("Empty email");
+      }
+      else
+      {
+        setEmailError(true);
+        setEmailErrorText("Incorrect form of email");
+      }
+    }
+  }
 
  export function setPasswordState(password:string, setPasswordError: React.Dispatch<React.SetStateAction<boolean>>
   , setPasswordErrorText: React.Dispatch<React.SetStateAction<string>>)
@@ -104,6 +123,46 @@ export function setUsernameState (username:string, setUsernameError: React.Dispa
     {
       setPasswordError(false);
       setPasswordErrorText("");
+    }
+  }
+
+  export function setAddressState(
+    country:string, setCountryError: React.Dispatch<React.SetStateAction<boolean>>, setCountryErrorText: React.Dispatch<React.SetStateAction<string>>,
+    city:string, setCityError: React.Dispatch<React.SetStateAction<boolean>>, setCityErrorText: React.Dispatch<React.SetStateAction<string>>,
+    street:string, setStreetError: React.Dispatch<React.SetStateAction<boolean>>, setStreetErrorText: React.Dispatch<React.SetStateAction<string>>)
+  {
+    
+    if(country!=="")
+    {
+      if(city==="")
+      {
+        setCityError(true);
+        setCityErrorText("Empty City field");
+      }    
+      if(street ==="")
+      {
+        setStreetError(true);
+        setStreetErrorText("Empty Street field");
+      }  
+    }
+    else 
+    {
+      if(city!=="")
+      {
+        setCountryError(true);
+        setCountryErrorText("Empty Country field");
+
+        setStreetError(true);
+        setStreetErrorText("Empty Street field");
+      }    
+      if(street!=="")
+      {
+        setCountryError(true);
+        setCountryErrorText("Empty Country field");
+
+        setCityError(true);
+        setCityErrorText("Empty City field");
+      } 
     }
   }
 

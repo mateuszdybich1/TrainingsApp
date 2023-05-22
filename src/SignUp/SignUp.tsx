@@ -11,18 +11,32 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Copyright from '../Copyright'
-import * as EmailValidator from 'email-validator';
-import {setUsernameState,setNameState,setLastNameState,setPasswordState,setCityState,setStreetState} from './SetTextFieldState';
+
+import {setUsernameState,setNameState,setLastNameState,setEmailState,setPasswordState,setAddressState,setCityState,setStreetState} from './SetTextFieldState';
 import {countries} from './Countries';
 import MenuItem from '@mui/material/MenuItem';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { Checkbox, Collapse, FormGroup } from '@mui/material';
-import { sendData, UserData } from './SendData';
-import { validateAddress } from './Validation';
+import { UserData } from './SendData';
 import { FormControl } from '@mui/base';
+
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { AuthContext } from '../AuthContext';
+import { useNavigate } from 'react-router-dom';
+
+
+
+
+
+
+
+
 
 const theme = createTheme();
 
@@ -67,6 +81,9 @@ export default function SignUp() {
   const [isShowAddressButtonClicked, setShowAddressButtonClicked] = React.useState(false);
   const [showAddressButtonText, setShowAddressButtonText] = React.useState("Add Address (Optional)");
 
+  const { setCurrentUser,currentUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+
 
   function showAddressTextFields(){
     if(isShowAddressButtonClicked=== true)
@@ -95,24 +112,27 @@ export default function SignUp() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-
-    const isEmailValid : boolean = EmailValidator.validate(email);
+    console.log(currentUser);
+    
+    
 
     setUsernameState(username,setUsernameError, setUsernameErrorText);
     setNameState(name,setNameError,setNameErrorText);
     setLastNameState(lastName, setLastNameError, setLastNameErrorText);
+    setEmailState(email,setEmailError,setEmailErrorText);
     setPasswordState(password, setPasswordError, setPasswordErrorText);
+    setAddressState(country,setCountryError,setCountryErrorText,city,setCityError, setCityErrorText, street, setStreetError, setStreetErrorText);
 
 
-    if(isEmailValid &&  !usernameError && !nameError && !lastNameError && !passwordError)
+
+    if(!emailError &&  !usernameError && !nameError && !lastNameError && !passwordError)
     {
 
-      let axiosUserData: UserData = 
+      let userData: UserData = 
         {
           username: username,
-          name: name,
-          lastname: lastName,
+          firstName: name,
+          lastName: lastName,
           email: email,
           password: password,
           isTeacher: isTeacher,
@@ -121,52 +141,78 @@ export default function SignUp() {
           street: street,
           
         };
-      const isAddressValid : boolean = validateAddress(country,city,street);
+      
 
-      if(isAddressValid)
-      {
-        if(country===""&& city===""&& street==="")
+        if(!countryError && !cityError && !streetError)
         {
-          sendData(axiosUserData);
-        }
-        else if(country!==""&& city!==""&& street!=="")
-        {
-          setCityState(street, setStreetError, setStreetErrorText);
-          setStreetState(city, setCityError, setCityErrorText);
-          if(!streetError && !cityError)
+          if(country!==""&& city!==""&& street!=="")
           {
-            sendData(axiosUserData);
+            setCityState(street, setStreetError, setStreetErrorText);
+            setStreetState(city, setCityError, setCityErrorText);
+            if(!streetError && !cityError)
+            {
+              axios.post('/user/register', userData)
+            .then(response =>{toast.success("Register Success", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                });
+                setCurrentUser({ username: username });   
+                navigate('/');
+              } )
+            .catch(error => {
+                toast.error(error.response.data, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    });
+            });
+
+            }
           }
-        }    
-      }
-      else{
-        if(country==="")
-        {
-          setCountryError(true);
-          setCountryErrorText("Empty Country field");
+          else
+          {
+              axios.post('/user/register', userData)
+            .then(response =>{toast.success("Register Success", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                });
+
+                setCurrentUser({ username: username });
+                navigate('/');
+              } )
+            .catch(error => {
+                toast.error(error.response.data, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    });
+            });
+          }   
         }
-        if(city==="")
-        {
-          setCityError(true);
-            setCityErrorText("Empty City field");
-        }
-        if(street==="")
-        {
-          setStreetError(true);
-          setStreetErrorText("Empty Street field");
-        }
-      }
     }
-    else if(email=="")
-    {
-      setEmailError(true);
-      setEmailErrorText("Empty email");
-    }
-    else if(!isEmailValid)
-    {
-      setEmailError(true);
-      setEmailErrorText("Incorrect form of email");
-    }
+   
     
 
   };
@@ -174,6 +220,9 @@ export default function SignUp() {
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
+        <Box>
+            <ToastContainer />
+        </Box>
         <CssBaseline />
         <Box
           sx={{

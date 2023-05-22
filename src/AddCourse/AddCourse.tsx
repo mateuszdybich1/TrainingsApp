@@ -107,7 +107,7 @@ export default function AddCourse()
             };
             
             axios.post('/course/addcourse', courseData)
-            .then(response =>{toast.success("Sukces: " + response.status , {
+            .then(response =>{toast.success("Course added successfully" , {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,

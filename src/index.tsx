@@ -7,20 +7,23 @@ import MainPage from './Dashboard/Dashboard';
 import SignUp from './SignUp/SignUp';
 import SignIn from './SignIn/SignIn';
 import AddCourse from './AddCourse/AddCourse';
+import { AuthProvider } from './AuthContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
+    <AuthProvider>
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<MainPage/>}/>
-        <Route path='/signup' element={<SignUp/>}/>
-        <Route path='/signin' element={<SignIn/>}/>
-        <Route path='/addcourse' element={<AddCourse/>}/>
+        <Route key="mainPage" path='/' element={<MainPage/>}/>
+        <Route key="signUn" path='/signup' element={<SignUp/>}/>
+        <Route key="signIn" path='/signin' element={<SignIn/>}/>
+        <Route key="addCourse" path='/addcourse' element={<AddCourse/>}/>
       </Routes>
     </BrowserRouter>
+    </AuthProvider>
   </React.StrictMode>
 );
 
