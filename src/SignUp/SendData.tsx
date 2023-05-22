@@ -3,8 +3,8 @@
 export interface UserData
 {
   username:string, 
-  name:string,
-  lastname: string,
+  firstName:string,
+  lastName: string,
   email:string,
   password:string,
   isTeacher:boolean,
@@ -13,7 +13,3 @@ export interface UserData
   street:string
 }
 
-export function sendData(data: UserData)
-{
-  console.log(data.isTeacher);
-}

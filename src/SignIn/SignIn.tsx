@@ -13,9 +13,10 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Copyright from '../Copyright';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import * as EmailValidator from 'email-validator';
 import { validatePassword } from './Validation';
+import { AuthContext } from '../AuthContext';
 
 
 
@@ -32,9 +33,13 @@ export default function SignIn() {
     const [passwordError, setPasswordError] = useState(false);
     const [passwordErrorText, setPasswordErrorText] = useState("");
 
+    const { currentUser } = useContext(AuthContext);
+
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 
         event.preventDefault();
+
+        console.log(currentUser);
 
         const data = new FormData(event.currentTarget);
 
@@ -45,10 +50,10 @@ export default function SignIn() {
         if(isEmailValid && isPasswordValid)
         {
 
-            console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-            });
+            // console.log({
+            // email: data.get('email'),
+            // password: data.get('password'),
+            // });
         }
         else if(email=="")
         {
