@@ -14,11 +14,21 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Copyright from '../Copyright';
 import { useContext, useState } from 'react';
-import * as EmailValidator from 'email-validator';
-import { validatePassword } from './Validation';
+import { validatePassword } from './SetSignInTextFieldState';
+import{setEmailState} from '../SignUp/SetSignUpTextFieldState';
+
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import { AuthContext } from '../AuthContext';
+import { useNavigate } from 'react-router-dom';
 
-
+interface LoginData
+{
+  email:string,
+  password:string,
+}
 
 
 const theme = createTheme();
@@ -33,43 +43,68 @@ export default function SignIn() {
     const [passwordError, setPasswordError] = useState(false);
     const [passwordErrorText, setPasswordErrorText] = useState("");
 
-    const { currentUser } = useContext(AuthContext);
+    const { currentUser,setCurrentUser } = useContext(AuthContext);
+    const navigate = useNavigate();
+
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 
         event.preventDefault();
 
-        console.log(currentUser);
+        
 
         const data = new FormData(event.currentTarget);
 
-        const isEmailValid : boolean = EmailValidator.validate(email);
+        setEmailState(email,setEmailError,setEmailErrorText);
 
         const isPasswordValid: boolean = validatePassword(password, setPasswordError, setPasswordErrorText);
 
-        if(isEmailValid && isPasswordValid)
+        if(!emailError && isPasswordValid)
         {
 
-            // console.log({
-            // email: data.get('email'),
-            // password: data.get('password'),
-            // });
+          let loginData : LoginData =
+          {
+            email : email,
+            password : password
+          }
+
+          axios.post('/user/login',loginData )
+          .then(response =>{toast.success("Register Success", {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "dark",
+              });
+
+              setCurrentUser({ username: response.data });
+              navigate('/');
+            } )
+          .catch(error => {
+              toast.error(error.response.data, {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "dark",
+                  });
+          });
         }
-        else if(email=="")
-        {
-            setEmailError(true);
-            setEmailErrorText("Empty email");
-        }
-        else if(!EmailValidator.validate(email))
-        {
-            setEmailError(true);
-            setEmailErrorText("Incorrect form of email");
-        }
+
     };
 
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
+        <Box>
+            <ToastContainer />
+        </Box>
         <CssBaseline />
         <Box
           sx={{

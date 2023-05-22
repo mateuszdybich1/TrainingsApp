@@ -14,7 +14,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useContext, useState } from 'react';
 import Copyright from '../Copyright'
 
-import {setUsernameState,setNameState,setLastNameState,setEmailState,setPasswordState,setAddressState,setCityState,setStreetState} from './SetTextFieldState';
+import {setUsernameState,setNameState,setLastNameState,setEmailState,setPasswordState,setAddressState,setCityState,setStreetState} from './SetSignUpTextFieldState';
 import {countries} from './Countries';
 import MenuItem from '@mui/material/MenuItem';
 import AddIcon from '@mui/icons-material/Add';
@@ -81,7 +81,7 @@ export default function SignUp() {
   const [isShowAddressButtonClicked, setShowAddressButtonClicked] = React.useState(false);
   const [showAddressButtonText, setShowAddressButtonText] = React.useState("Add Address (Optional)");
 
-  const { setCurrentUser,currentUser } = useContext(AuthContext);
+  const { currentUser,setCurrentUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
 
@@ -112,7 +112,7 @@ export default function SignUp() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(currentUser);
+    
     
     
 
