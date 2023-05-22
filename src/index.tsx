@@ -9,12 +9,14 @@ import SignIn from './SignIn/SignIn';
 import AddCourse from './AddCourse/AddCourse';
 import { AuthProvider } from './AuthContext';
 
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
     <AuthProvider>
+      
     <BrowserRouter>
       <Routes>
         <Route key="mainPage" path='/' element={<MainPage/>}/>

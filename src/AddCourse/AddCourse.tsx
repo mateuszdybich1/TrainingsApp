@@ -5,7 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useContext, useState } from 'react';
 import { FormControl, FormControlLabel, FormLabel, Grid, IconButton, Input, MenuItem, Paper, Radio, RadioGroup } from '@mui/material';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -20,6 +20,8 @@ import { CourseData} from './SendCourseData';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ButtonAppBar from '../Header'
+import { AuthContext } from '../AuthContext';
 
 
 
@@ -56,6 +58,8 @@ export default function AddCourse()
 
 
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+    const { currentUser,setCurrentUser } = useContext(AuthContext);
     
 
     const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
@@ -103,7 +107,7 @@ export default function AddCourse()
                 location:location,
                 courseLevel:courseLevel,
                 trainerName:trainerName,
-                currentUserUsername:"string"  
+                currentUserUsername:currentUser?.username.toString()+"" 
             };
             
             axios.post('/course/addcourse', courseData)
@@ -143,13 +147,8 @@ export default function AddCourse()
         </Box>
 
         <Box >
-        <Container disableGutters maxWidth={false} sx={{display:'flex', flexDirection:'row',justifyContent:'center' ,background:'grey'}}>
-            <Box display={'flex'} justifyContent={'center'} alignContent={'center'} >
-                <h2>
-                    Add course
-                </h2>
-            </Box>
-            
+        <Container disableGutters maxWidth={false} >
+            <ButtonAppBar/> 
         </Container>
         </Box>
 
@@ -170,16 +169,16 @@ export default function AddCourse()
                             }}>
                                 <Paper elevation={5} sx={{display:'flex',justifyContent:'center', alignItems:'center' ,height:'100%', width:'100%'}}>
                                     
-                                    <Box width={'100%'} height={'100%'}>
-                                        <Grid padding={10} container spacing={2} height={'100%'}>
+                                    <Box width={'100%'} height={'100%'} >
+                                        <Grid padding={10} container  height={'100%'}>
 
-                                        <Grid item sm={12} xs={12} height={'75%'} sx={{ background: 'grey' }}>
-                                            <Box display={'flex'} justifyContent={'center'} height={'100%'} alignItems={'center'} alignContent={'center'}>
+                                        <Grid item sm={12} xs={12} height={'75%'} marginTop={-2} padding={1} sx={{ background:'#1769aa' }}>
+                                            <Box display={'flex'} justifyContent={'center'} height={'100%'} width={'100%'} alignItems={'center'} alignContent={'center'}>
                                             <Box>
                                                 {selectedImage ? (
-                                                <img src={selectedImage} alt="Selected" style={{ maxWidth: '100%', maxHeight: '100%' }} />
+                                                <img src={selectedImage} alt="Selected" style={{ width:'100%', maxWidth: '100%', maxHeight: '100%' }} />
                                                 ) : (
-                                                <h2>image field</h2>
+                                                <h2 style={{color:'white'}} >image field</h2>
                                                 )}
                                             </Box>
                                             </Box>
@@ -221,20 +220,28 @@ export default function AddCourse()
                             </Box>  
                 </Box>
                 </Grid>
-                <Grid item sm={6} xs={12}>
-                <Box  height={'100%'}>
-                
-                <Box sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        height:'100%'
-                     
-                    }}>
-                    <Paper elevation={5} sx={{display:'flex', margin:5, height:'100%' }}>
-                
-                        <Box component="form" onSubmit={handleSubmit} noValidate sx={{paddingLeft:10,paddingRight:10, paddingTop:5, paddingBottom:5}}>
-                            <Grid container spacing={1.5}>
+
+                <Grid  padding={5} item sm={6} xs={12}>
+                <Box   width={'100%'} height={'100%'} sx={{ display:'flex', justifyContent:'center', alignItems:'center'}}>
+                    <Box sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                width:'100%',
+                                height:'100%',
+                                justifyContent:'center',
+                                
+                                
+                                
+                            }}>
+                                <Paper elevation={5} sx={{display:'flex' , height:'100%', width:'100%'}}>
+                                    
+                                <Box component="form" onSubmit={handleSubmit} flexGrow={1} margin={5} noValidate>
+                                <Box  width={'100%'} display={'flex'} height={'100%'} flexDirection={'column'}>
+
+                                
+
+                                <Grid container spacing={1.5}>
                                 <Grid item sm={12} xs ={12}>
                                     <TextField
                                         margin="normal"
@@ -460,24 +467,29 @@ export default function AddCourse()
                                             error={trainerNameError}
                                     />
                                 </Grid>
-                            </Grid>  
-                            <Grid item xs={12} sm={12}>
+                            </Grid>
+                            <Box display={'flex'} height={'100%'}>
+                                
+                            
                                 <Button
                                     type="submit"
+                                    
                                     fullWidth
                                     variant="contained"
-                                    sx={{ marginTop:5 }}
+                                    sx={{ marginBottom:2.5,marginTop:11}}
                                 >
                                 Add Course
                                 </Button>
-                            </Grid>          
                             
+                            </Box>           
+                            </Box>
                         </Box>
-                        
-                </Paper>
-            </Box>      
-    </Box>  
+                                    
+                            </Paper>
+                            </Box>  
+                </Box>
                 </Grid>
+               
                 
             </Grid>
                 
