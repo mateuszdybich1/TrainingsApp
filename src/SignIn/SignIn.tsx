@@ -81,7 +81,7 @@ export default function SignIn() {
               });
 
               setCurrentUser({ username: response.data });
-              navigate('/');
+              navigate('/addcourse');
             } )
           .catch(error => {
               toast.error(error.response.data, {
