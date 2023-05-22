@@ -151,6 +151,7 @@ export default function SignUp() {
             setStreetState(city, setCityError, setCityErrorText);
             if(!streetError && !cityError)
             {
+              
               axios.post('/user/register', userData)
             .then(response =>{toast.success("Register Success", {
                 position: "top-right",

@@ -34,7 +34,7 @@ export default function ButtonAppBar() {
     
     const [notificationCount, setNotificationCount] = useState(0);
 
-    console.log(currentUser?.username.toString()+"");
+    
     const currentUserModel = {
         
         username: currentUser?.username.toString()+"",
@@ -48,7 +48,7 @@ export default function ButtonAppBar() {
             setNotificationCount(rowsArray.length);
         }).catch(error => { console.log(error.response.data)});
 
-    });
+    }, []);
 
     
     const handleClose = () => {setAnchorEl(null);};
@@ -81,7 +81,7 @@ export default function ButtonAppBar() {
                 }
             variant="text"
 
-            href='/mycourses'
+            onClick={()=>{navigate('/mycourses')}}
             >
                 My Courses
             </Button>
