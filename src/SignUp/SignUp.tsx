@@ -153,7 +153,7 @@ export default function SignUp() {
             if(!streetError && !cityError)
             {
               
-              axios.post(configValue, userData)
+              axios.post('https://trainingsappapi20230523141305.azurewebsites.net/user/register', userData)
             .then(response =>{toast.success("Register Success", {
                 position: "top-right",
                 autoClose: 5000,
@@ -184,7 +184,7 @@ export default function SignUp() {
           }
           else
           {
-              axios.post(configValue, userData)
+              axios.post('https://trainingsappapi20230523141305.azurewebsites.net/user/register', userData)
             .then(response =>{toast.success("Register Success", {
                 position: "top-right",
                 autoClose: 5000,

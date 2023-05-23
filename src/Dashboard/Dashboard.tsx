@@ -122,10 +122,10 @@ function DashboardContent() {
     const { currentUser,setCurrentUser } = React.useContext(AuthContext);
    
    
-    const configValue: string = (process.env.ALL_COURSES as string);
+    //const configValue: string = (process.env.ALL_COURSES as string);
     
       React.useEffect(() => {
-        axios.get(configValue)
+        axios.get("https://trainingsappapi20230523141305.azurewebsites.net/course/getallcourses")
         .then(response =>{
             let rowsArray: Array<CourseData> = response.data;
             setCourses(rowsArray)
