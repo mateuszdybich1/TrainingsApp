@@ -127,6 +127,7 @@ export default function SignUp() {
 
     if(!emailError &&  !usernameError && !nameError && !lastNameError && !passwordError)
     {
+      const configValue: string = (process.env.SIGN_UP as string);
 
       let userData: UserData = 
         {
@@ -152,7 +153,7 @@ export default function SignUp() {
             if(!streetError && !cityError)
             {
               
-              axios.post('/user/register', userData)
+              axios.post(configValue, userData)
             .then(response =>{toast.success("Register Success", {
                 position: "top-right",
                 autoClose: 5000,
@@ -183,7 +184,7 @@ export default function SignUp() {
           }
           else
           {
-              axios.post('/user/register', userData)
+              axios.post(configValue, userData)
             .then(response =>{toast.success("Register Success", {
                 position: "top-right",
                 autoClose: 5000,

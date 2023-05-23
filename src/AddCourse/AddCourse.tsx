@@ -93,7 +93,7 @@ export default function AddCourse()
 
         if(isCourseValid && isCourseLevelValid && isLocationValid && isTrainernameValid)
         {
-
+            const configValue: string = (process.env.ADD_COURSE as string);
             
             let courseData: CourseData = 
             {
@@ -110,7 +110,7 @@ export default function AddCourse()
                 currentUserUsername:currentUser?.username.toString()+"" 
             };
             
-            axios.post('/course/addcourse', courseData)
+            axios.post(configValue, courseData)
             .then(response =>{toast.success("Course added successfully" , {
                 position: "top-right",
                 autoClose: 5000,

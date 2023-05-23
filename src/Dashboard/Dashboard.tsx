@@ -122,10 +122,10 @@ function DashboardContent() {
     const { currentUser,setCurrentUser } = React.useContext(AuthContext);
    
    
-    
+    const configValue: string = (process.env.ALL_COURSES as string);
     
       React.useEffect(() => {
-        axios.get('/course/getallcourses')
+        axios.get(configValue)
         .then(response =>{
             let rowsArray: Array<CourseData> = response.data;
             setCourses(rowsArray)

@@ -20,6 +20,7 @@ import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined
 import { useNavigate } from 'react-router-dom';
 
 
+
 interface SignToCourseData
 {
   username:string,
@@ -42,13 +43,14 @@ export default function SignToCourse()
     const { currentUser,setCurrentUser } = useContext(AuthContext);
     const navigate = useNavigate();
    
+    
     const currentUserModel = {
         username: currentUser?.username+"",
       };
- 
+      const configValue: string = (process.env.SIGN_TO_COURSE as string);
     
       useEffect(() => {
-        axios.post('/course/getcourses', currentUserModel)
+        axios.post( configValue, currentUserModel)
         .then(response =>{
             let rowsArray: Array<CourseData> = response.data;
             setCourses(rowsArray)

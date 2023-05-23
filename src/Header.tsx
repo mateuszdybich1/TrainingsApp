@@ -40,9 +40,9 @@ export default function ButtonAppBar() {
         username: currentUser?.username.toString()+"",
       };
 
-    
+      const configValue: string = (process.env.MY_COURSES as string);
     useEffect(() => {
-        axios.post('/course/getuserscourses', currentUserModel)
+        axios.post(configValue, currentUserModel)
         .then(res =>{
             let rowsArray: Array<CourseData> = res.data;
             setNotificationCount(rowsArray.length);
