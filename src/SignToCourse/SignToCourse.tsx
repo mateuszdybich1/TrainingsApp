@@ -78,7 +78,7 @@ export default function SignToCourse()
             courseName: courseName
         }
       
-        axios.post('/course/signtocourse', data)
+        axios.post('https://trainingsappapi20230523141305.azurewebsites.net/course/signtocourse', data)
         .then(response =>{
             toast.success("Successfully signed to course", {
                 position: "top-right",
