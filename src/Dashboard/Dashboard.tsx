@@ -9,27 +9,52 @@ import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
+
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
+
 import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import LayersIcon from '@mui/icons-material/Layers';
+
+import { Button, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+
 import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
 
 import Copyright from '../Copyright';
-import Chart from './Chart';
-import Deposits from './Deposits';
-import Orders from './Orders';
+import axios from 'axios';
+
+import { toast } from 'react-toastify';
+import { CourseData } from '../AddCourse/SendCourseData';
+import { AuthContext } from '../AuthContext';
 
 
+
+
+import {  useContext, useEffect, useState } from 'react';
+
+
+import 'react-toastify/dist/ReactToastify.css';
+import ButtonAppBar from '../Header'
+
+import EventIcon from '@mui/icons-material/Event';
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
+import TranslateOutlinedIcon from '@mui/icons-material/TranslateOutlined';
+import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
+import InsertChartOutlinedTwoToneIcon from '@mui/icons-material/InsertChartOutlinedTwoTone';
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import { useNavigate } from 'react-router-dom';
+
+
+
+const Image = styled('img')(({ theme }) => ({
+  width: '100%',
+  maxWidth: 300,
+  marginBottom: theme.spacing(2),
+}));
 
 
 
@@ -91,6 +116,34 @@ function DashboardContent() {
     setOpen(!open);
   };
 
+
+
+  let [courses, setCourses] = React.useState<CourseData[]>([]);
+    const { currentUser,setCurrentUser } = React.useContext(AuthContext);
+   
+   
+    
+    
+      React.useEffect(() => {
+        axios.get('/course/getallcourses')
+        .then(response =>{
+            let rowsArray: Array<CourseData> = response.data;
+            setCourses(rowsArray)
+        } )
+        .catch(error => {
+            toast.error(error.response.data, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                });
+        });
+      }, []);
+
   return (
     
     <ThemeProvider theme={mdTheme}>
@@ -99,7 +152,7 @@ function DashboardContent() {
         <AppBar position="absolute" open={open}>
           <Toolbar
             sx={{
-              pr: '24px', // keep right padding when drawer closed
+              pr: '24px', 
             }}
           >
             <IconButton
@@ -121,13 +174,9 @@ function DashboardContent() {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Dashboard
+              Trainings App
             </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+            
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
@@ -149,15 +198,10 @@ function DashboardContent() {
               <ListItemIcon>
                 <DashboardIcon />
               </ListItemIcon>
-              <ListItemText primary="Dashboard" />
+              <ListItemText primary="Main Page" />
             </ListItemButton>
 
-            <ListItemButton>
-              <ListItemIcon>
-              <BarChartIcon />
-              </ListItemIcon>
-              <ListItemText primary="Courses" />
-            </ListItemButton>
+            
 
             <ListItemButton component={Link} href="/signin">
               <ListItemIcon>
@@ -179,42 +223,74 @@ function DashboardContent() {
             overflow: 'auto',
           }}
         >
-          <Toolbar />
+          
+          <Box display={'flex'} justifyContent={'center'}>
+            
+            <h2>Sign To Course</h2>
+        </Box>
+        <Box display={'flex'} flexDirection={'column'} justifyContent={'center'}>
+        
+            {courses.map((course) => (
+                
+                 <Paper elevation={5} sx={{display:'flex',minWidth:'800px', width:'80%',alignContent:'center', alignSelf:'center', margin:2,minHeight:'150px',maxHeight:'150px'}}>
+                    <Box display={'flex'} width={'100%'} paddingTop={2} paddingBottom={2} paddingLeft={2} paddingRight={5}>
+                        <Box paddingRight={2} height={'100%'} maxWidth={'150px'} minWidth={'250px'}  justifyContent={'center'} alignItems={'center'}>
+                            <Image sx={{display:'flex'}} height={'100%'} src={course.image} alt={course.courseName} />
+                        </Box>
+                        <Box display={'flex'} flexGrow={1} flexDirection={'column'} height={'100%'}>
+                            <Box display={'flex'} >
+                                <Typography variant="h6">Course Name: {course.courseName}</Typography>
+                            </Box>
+                            <Box display={'flex'} marginTop={1} >
+                                <Box width={'50%'}  display={'flex'} flexDirection={'column'}>
+                                    <Box paddingBottom={1} display={'flex'} flexDirection={'row'} flexShrink={0} whiteSpace={'nowrap'} marginRight={2}>
+                                        <EventIcon sx={{marginRight:1}}></EventIcon>
+                                        <Typography   variant="body1">{course.startDate} - {course.endDate}</Typography>
+                                    </Box>
+                                    <Box paddingBottom={1} display={'flex'} flexDirection={'row'} flexShrink={0} whiteSpace={'nowrap'} marginRight={2}>
+                                        <TranslateOutlinedIcon sx={{marginRight:1}}></TranslateOutlinedIcon>
+                                        <Typography variant="body1">Language: {course.language}</Typography>
+                                    </Box>
+                                    <Box paddingBottom={1} display={'flex'} flexDirection={'row'} flexShrink={0} whiteSpace={'nowrap'} marginRight={2}>
+                                        <LocationOnOutlinedIcon sx={{marginRight:1}}></LocationOnOutlinedIcon>
+                                        <Typography variant="body1">Location: {course.location}</Typography>
+                                    </Box>
+                                
+                                </Box>
+
+                                <Box width={'50%'} display={'flex'} flexDirection={'column'}>
+                                    <Box paddingBottom={1} display={'flex'} flexDirection={'row'} flexShrink={0} whiteSpace={'nowrap'} marginRight={2}>
+                                        <AccessTimeOutlinedIcon sx={{marginRight:1}}></AccessTimeOutlinedIcon>
+                                        <Typography variant="body1">{course.startTime} - {course.endTime}</Typography>
+                                    </Box>
+                                    <Box paddingBottom={1} display={'flex'} flexDirection={'row'} flexShrink={0} whiteSpace={'nowrap'} marginRight={2}>
+                                        <InsertChartOutlinedTwoToneIcon sx={{marginRight:1}}></InsertChartOutlinedTwoToneIcon>
+                                        <Typography variant="body1">{course.courseLevel}</Typography>
+                                    </Box>
+                                    <Box  display={'flex'} flexDirection={'row'} flexShrink={0} whiteSpace={'nowrap'} marginRight={2}>
+                                        <PersonOutlineOutlinedIcon  sx={{marginRight:1}}/>
+                                        <Typography variant="body1">{course.trainerName}</Typography>
+                                    </Box>
+                            
+                                </Box>
+
+                                
+                   
+                            </Box>
+              
+                        </Box>
+
+                       
+                    </Box>
+                 </Paper>
+            ))}
+
+
+        </Box>
+
+
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              {/* Chart */}
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  <Chart />
-                </Paper>
-              </Grid>
-              {/* Recent Deposits */}
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  <Deposits />
-                </Paper>
-              </Grid>
-              {/* Recent Orders */}
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <Orders />
-                </Paper>
-              </Grid>
-            </Grid>
+            
             <Copyright sx={{ pt: 4 }} />
           </Container>
         </Box>
