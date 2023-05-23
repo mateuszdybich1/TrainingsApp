@@ -47,10 +47,10 @@ export default function SignToCourse()
     const currentUserModel = {
         username: currentUser?.username+"",
       };
-      const configValue: string = (process.env.SIGN_TO_COURSE as string);
+      //const configValue: string = (process.env.SIGN_TO_COURSE as string);
     
       useEffect(() => {
-        axios.post( configValue, currentUserModel)
+        axios.post( 'https://trainingsappapi20230523141305.azurewebsites.net/course/getcourses', currentUserModel)
         .then(response =>{
             let rowsArray: Array<CourseData> = response.data;
             setCourses(rowsArray)

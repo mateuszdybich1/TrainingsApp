@@ -41,10 +41,10 @@ export default function MyCourses()
         username: currentUser?.username.toString()+"",
       };
  
-      const configValue: string = (process.env.MY_COURSES as string);
-    
+      //const configValue: string = (process.env.MY_COURSES as string);
+      
       useEffect(() => {
-        axios.post(configValue, currentUserModel)
+        axios.post('https://trainingsappapi20230523141305.azurewebsites.net/course/getuserscourses', currentUserModel)
         .then(response =>{
             let rowsArray: Array<CourseData> = response.data;
             setCourses(rowsArray)

@@ -127,7 +127,7 @@ export default function SignUp() {
 
     if(!emailError &&  !usernameError && !nameError && !lastNameError && !passwordError)
     {
-      const configValue: string = (process.env.SIGN_UP as string);
+      //const configValue: string = (process.env.SIGN_UP as string);
 
       let userData: UserData = 
         {

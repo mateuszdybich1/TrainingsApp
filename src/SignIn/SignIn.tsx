@@ -50,7 +50,7 @@ export default function SignIn() {
     const { currentUser,setCurrentUser } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    const configValue: string = (process.env.SIGNIN as string);
+    //const configValue: string = (process.env.SIGNIN as string);
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 
         event.preventDefault();
@@ -71,7 +71,7 @@ export default function SignIn() {
             password : password
           }
 
-          axios.post(configValue,loginData )
+          axios.post('https://trainingsappapi20230523141305.azurewebsites.net/user/login',loginData )
           .then(response =>{toast.success("Register Success", {
               position: "top-right",
               autoClose: 5000,
