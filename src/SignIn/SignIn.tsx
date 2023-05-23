@@ -50,7 +50,7 @@ export default function SignIn() {
     const { currentUser,setCurrentUser } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    const configValue: string = (process.env.SIGN_IN as string);
+    const configValue: string = (process.env.SIGNIN as string);
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 
         event.preventDefault();
