@@ -55,7 +55,7 @@ export default function ButtonAppBar() {
 
     function logout(): void 
     {
-        setCurrentUser({ username: ""});
+        setCurrentUser({ username: "",isTeacher:""});
         navigate('/');
     }
 

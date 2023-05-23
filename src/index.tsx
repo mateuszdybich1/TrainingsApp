@@ -8,6 +8,7 @@ import SignUp from './SignUp/SignUp';
 import SignIn from './SignIn/SignIn';
 import AddCourse from './AddCourse/AddCourse';
 import MyCourses from './MyCourses/MyCourses';
+import SignToCourse from './SignToCourse/SignToCourse';
 import { AuthProvider } from './AuthContext';
 
 
@@ -17,7 +18,6 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <AuthProvider>
-      
     <BrowserRouter>
       <Routes>
         <Route key="mainPage" path='/' element={<MainPage/>}/>
@@ -25,6 +25,7 @@ root.render(
         <Route key="signIn" path='/signin' element={<SignIn/>}/>
         <Route key="addCourse" path='/addcourse' element={<AddCourse/>}/>
         <Route key="mycourses" path='/mycourses' element={<MyCourses/>}/>
+        <Route key="signtocourse" path='/signtocourse' element={<SignToCourse/>}/>
       </Routes>
     </BrowserRouter>
     </AuthProvider>

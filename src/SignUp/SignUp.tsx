@@ -135,7 +135,7 @@ export default function SignUp() {
           lastName: lastName,
           email: email,
           password: password,
-          isTeacher: isTeacher,
+          isTeacher: isTeacher.valueOf().toString(),
           country: country,
           city: city,
           street: street,
@@ -163,8 +163,8 @@ export default function SignUp() {
                 progress: undefined,
                 theme: "dark",
                 });
-                setCurrentUser({ username: username });   
-                navigate('/');
+                setCurrentUser({ username: username, isTeacher:isTeacher.valueOf().toString() });   
+                navigate('/signtocourse');
               } )
             .catch(error => {
                 toast.error(error.response.data, {
@@ -195,8 +195,8 @@ export default function SignUp() {
                 theme: "dark",
                 });
 
-                setCurrentUser({ username: username });
-                navigate('/');
+                setCurrentUser({ username: username, isTeacher:isTeacher.valueOf().toString()  });
+                navigate('/signtocourse');
               } )
             .catch(error => {
                 toast.error(error.response.data, {
