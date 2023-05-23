@@ -7,7 +7,7 @@ export interface UserData
   lastName: string,
   email:string,
   password:string,
-  isTeacher:boolean,
+  isTeacher:string,
   country:string,
   city:string;
   street:string

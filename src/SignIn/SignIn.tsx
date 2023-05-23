@@ -29,7 +29,11 @@ interface LoginData
   email:string,
   password:string,
 }
-
+interface UserData
+{
+  username:string,
+  isTeacher:string,
+}
 
 const theme = createTheme();
 
@@ -53,7 +57,6 @@ export default function SignIn() {
 
         
 
-        const data = new FormData(event.currentTarget);
 
         setEmailState(email,setEmailError,setEmailErrorText);
 
@@ -79,9 +82,9 @@ export default function SignIn() {
               progress: undefined,
               theme: "dark",
               });
-
-              setCurrentUser({ username: response.data });
-              navigate('/addcourse');
+              let userData : UserData = response.data;
+              setCurrentUser({ username: userData.username, isTeacher: userData.isTeacher });
+              navigate('/signtocourse');
             } )
           .catch(error => {
               toast.error(error.response.data, {
